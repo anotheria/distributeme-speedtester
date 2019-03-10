@@ -1,14 +1,14 @@
 package org.distributeme.speedtester;
 
+import org.distributeme.core.ServiceDescriptor;
+import org.distributeme.core.ServiceDescriptor.Protocol;
+
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import org.distributeme.core.ServiceDescriptor;
-import org.distributeme.core.ServiceDescriptor.Protocol;
-import org.distributeme.speedtester.generated.RemoteTestingServiceStub;
 
 public class MultiThreadedRemoteClient {
 	public static void main(String[] args) throws Exception {
@@ -29,7 +29,10 @@ public class MultiThreadedRemoteClient {
 		System.out.println("Testing with " + remote);
 		
 		//--
-		RemoteTestingServiceStub stub = new RemoteTestingServiceStub(remote);
+		Class rtssClazz = Class.forName("org.distributeme.speedtester.generated.RemoteTestingServiceStub");
+		Constructor c = rtssClazz.getConstructor(ServiceDescriptor.class);
+
+		TestingService stub = (TestingService)c.newInstance(remote);
 		performTestRun(numberOfThreads, stub);
 		
 	}

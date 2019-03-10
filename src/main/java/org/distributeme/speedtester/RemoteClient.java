@@ -2,10 +2,11 @@ package org.distributeme.speedtester;
 
 import org.distributeme.core.ServiceDescriptor;
 import org.distributeme.core.ServiceDescriptor.Protocol;
-import org.distributeme.speedtester.generated.RemoteTestingServiceStub;
+
+import java.lang.reflect.Constructor;
 
 public class RemoteClient {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		//RemoteTesti
 		Protocol aProtocol = Protocol.RMI;
 		String aServiceId = "org_distributeme_speedtester_TestingService";
@@ -20,7 +21,10 @@ public class RemoteClient {
 		System.out.println("Testing with " + remote);
 		
 		//--
-		RemoteTestingServiceStub stub = new RemoteTestingServiceStub(remote);
+		Class rtssClazz = Class.forName("org.distributeme.speedtester.generated.RemoteTestingServiceStub");
+		Constructor c = rtssClazz.getConstructor(ServiceDescriptor.class);
+
+		TestingService stub = (TestingService)c.newInstance(remote);
 		BaseClient.performTestRun(stub);
 		
 	}
